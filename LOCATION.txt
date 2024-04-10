@@ -1,0 +1,70 @@
+// App.js
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+const App = () => {
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+            setError(null);
+          },
+          (error) => {
+            setError(error.message);
+          }
+        );
+      } else {
+        setError('Geolocation is not supported by this browser.');
+      }
+    };
+
+    getLocation();
+  }, []);
+
+  return (
+    <div className="location-tracker">
+      <h1>Location Tracker</h1>
+      {error && <div className="error">{error}</div>}
+      {latitude && longitude && (
+        <div className="map-container">
+          <iframe
+            title="Map"
+            width="600"
+            height="450"
+            frameBorder="0"
+            style={{ border: 0 }}
+            src={`https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${latitude},${longitude}&zoom=15`}
+            allowFullScreen
+          ></iframe>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default LocationTracker;
+
+
+#APP.CSS
+
+.location-tracker {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.map-container {
+  margin-top: 20px;
+}
